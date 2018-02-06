@@ -32,7 +32,8 @@ $root_url = '';
 $http_host = $_SERVER['HTTP_HOST'];
 
 // input encoding for iconv
-$iconv_input_encoding = 'CP1251';
+//$iconv_input_encoding = 'CP1251';
+$iconv_input_encoding = 'UTF-8';
 
 // date() format for file modification date
 $datetime_format = 'Y-m-d H:i:s';
@@ -157,6 +158,7 @@ unset($p, $use_auth, $iconv_input_encoding, $use_highlightjs, $highlightjs_style
 
 // Delete file / folder
 if (isset($_GET['del'])) {
+     fm_set_msg('停用刪除功能', 'error');
 /*    $del = $_GET['del'];
     $del = fm_clean_path($del);
     $del = str_replace('/', '', $del);

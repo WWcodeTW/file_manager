@@ -101,7 +101,7 @@ if ($use_auth) {
         // Logged
     } elseif (isset($_POST['fm_usr'], $_POST['fm_pwd'])) {
         // Logging In
-        sleep(1);
+        //sleep(1);
         if (isset($auth_users[$_POST['fm_usr']]) && $_POST['fm_pwd'] === $auth_users[$_POST['fm_usr']]) {
             $_SESSION['logged'] = $_POST['fm_usr'];
             fm_set_msg('You are logged in');
@@ -119,7 +119,7 @@ if ($use_auth) {
         ?>
         <div class="path">
             <form action="" method="post" style="margin:10px;text-align:center">
-                <input name="fm_usr" value="" placeholder="Username" required>
+                <input name="fm_usr" value="admin" placeholder="Username" required>
                 <input type="password" name="fm_pwd" value="" placeholder="Password" required>
                 <input type="submit" value="Login">
             </form>
@@ -731,7 +731,7 @@ if (isset($_GET['view'])) {
 
     $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
     $mime_type = fm_get_mime_type($file_path);
-    $filesize = filesize($file_path);
+    $filesize = realFileSize($file_path);
 
     $is_zip = false;
     $is_image = false;
@@ -1008,7 +1008,7 @@ foreach ($files as $f) {
     $is_link = is_link($path . '/' . $f);
     $img = $is_link ? 'icon-link_file' : fm_get_file_icon_class($path . '/' . $f);
     $modif = date(FM_DATETIME_FORMAT, filemtime($path . '/' . $f));
-    $filesize_raw = filesize($path . '/' . $f);
+    $filesize_raw = realFileSize($path . '/' . $f);
     $filesize = fm_get_filesize($filesize_raw);
     $filelink = '?p=' . urlencode(FM_PATH) . '&amp;view=' . urlencode($f);
     $all_files_size += $filesize_raw;
@@ -1284,6 +1284,20 @@ function fm_get_parent_path($path)
         return '';
     }
     return false;
+}
+
+/**
+ * filesize smaller or bigger than 2 GB on 32 bit Systems
+ * @param string $fpath
+ * @return int
+ */
+function realFileSize($fpath) {
+	
+    if ((PHP_OS == 'Linux') || (PHP_OS == 'FreeBSD') || (PHP_OS == 'Unix') || (PHP_OS == 'SunOS')) {
+      return trim(shell_exec("stat -c%s " . escapeshellarg($fpath)));
+    } else {
+      return filesize($fpath);
+    }
 }
 
 /**
